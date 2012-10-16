@@ -53,15 +53,16 @@ def load_local_config(required = [], optional = [], config_file = None):
 			new_config[key] = cast_env_vars(os.environ[key])
 	return new_config
 
-def load_remote_heroku_config(remote_config = None):
+def load_remote_heroku_config(required=None, remote_config = None):
 	remote_config = None
 	new_config = {}
 
 	if not remote_config and 'HEROKU_REMOTE_CONFIG' in os.environ:
 		remote_config = os.environ['HEROKU_REMOTE_CONFIG']
+
 	if remote_config:
-		if 'REQUIRED_OPTIONS' not in globals():
-			raise Exception("Must set REQUIRED_OPTIONS in settings if using HEROKU_REMOTE_CONFIG")
+		if not required:
+			raise Exception("Must pass required options if using HEROKU_REMOTE_CONFIG")
 		parts = remote_config.split(":")
 		if len(parts) < 2:
 			raise Exception("Error, bad format for HEROKU_REMOTE_CONFIG. Should be key:app-name")
@@ -70,7 +71,7 @@ def load_remote_heroku_config(remote_config = None):
 		import heroku
 		h = heroku.from_key(key)
 		h_app = h.apps[app]
-		for key in REQUIRED_OPTIONS:
+		for key in required:
 			if key in h_app.config.data:
 				if 'DEBUG_SETTINGS' in os.environ:
 					print "Importing %s from %s" % (key, app)
