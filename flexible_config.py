@@ -2,8 +2,6 @@
 import os
 import os.path
 
-os.environ['DEBUG_SETTINGS'] = "1"
-
 def determine_env():
 	if 'CCENV' in os.environ:
 		return os.environ['CCENV']
