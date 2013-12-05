@@ -20,18 +20,17 @@ def cast_env_vars(value):
 	else:
 		return value
 
-def load_local_config(required = [], optional = [], config_file = None):
+def load_local_config(config_file, required = [], optional = []):
 	"""Loads config from ~/.cloudconnect and from os.environ, and merges values into current globals()"""
 	from ConfigParser import SafeConfigParser
 	config = SafeConfigParser()
 	config.optionxform = str
-	path = config_file or os.path.join(os.environ['HOME'], ".cloudconnect")
 	new_config = {}
 
-	if os.path.exists(path):
+	if os.path.exists(config_file):
 		if 'DEBUG_SETTINGS' in os.environ:
-			print "Reading '%s'" % path
-		config.read(path)
+			print "Reading '%s'" % config_file
+		config.read(config_file)
 
 		env = determine_env()
 		if env in config.sections():
